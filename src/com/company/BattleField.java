@@ -15,6 +15,7 @@ public class BattleField {
             }
         }
         this.putShips();
+
     }
 
     public void putShips() {
