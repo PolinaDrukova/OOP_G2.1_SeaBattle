@@ -1,30 +1,30 @@
 package com.company;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 public class Ship {
     public int x;
     public int y;
-    public int x2;
-    public int y2;
+    public int dx;
+    public int dy;
     public int size;
     public int health;
-    private int dx;
-    private int dy;
+
+    public ShipState state;
     public BattleField field;
 
-    public ArrayList<States> elements;
+    public ArrayList<GameElements> elements;
 
     public Ship(BattleField field, int size) {
         this.size = size;
         this.health = size;
         this.field = field;
+        this.state = ShipState.healthy;
         this.elements = new ArrayList<>();
     }
 
-    private void GetPlace() {
+    private void getPlace() {
         Random rand = new Random();
         this.x = rand.nextInt(10);
         this.y = rand.nextInt(10);
