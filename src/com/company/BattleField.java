@@ -49,12 +49,48 @@ public class BattleField {
 
     }
 
-    public boolean isBound(int x, int y) {
+    public boolean shot(int x, int y) {
+        boolean shot = false;
+        State state = this.getShipState(x, y);
+        elements[x][y].shoot = true;
+
+        if (state == State.enWell) {
+            shot = true;
+            Ship ship = elements[x][y].ship;
+            if (ship.health != 0) { //если здоровье не нулевое, вычитается один пункт и присваивается тип ранен
+                ship.health--;
+                if (ship.health == 0) { //если здоровье нулевое присваивается тип убит
+                    ship.state = ShipState.killed;
+                } else {
+                    ship.state = ShipState.injured;
+                    elements[x][y].state = State.injured;
+                }
+            }
+        } else {
+            if ((state == State.border) ||    //если попало на границу или в воду, тип "мимо"
+                    (state == State.water)) {
+                this.setShip(x, y, State.missed);
+            }
+        }
+        return shot;
+    }
+
+
+    public boolean setShip(int x, int y, State state) {
+        if (this.check_Bound(x, y)) {
+            this.elements[x][y].state = state;
+        }
+
+        return true;
+    }
+
+    public boolean check_Bound(int x, int y) {
         return x >= 0 && x <= 9 && y >= 0 && y <= 9;
     }
 
-    public State GetElement(int x, int y) {//получаем тип элемента
-        if (isBound(x,y)) {
+
+    public State getShipState(int x, int y) {//получаем тип элемента
+        if (check_Bound(x, y)) {
             return elements[x][y].state;
         } else {
             return State.empty;
