@@ -4,7 +4,9 @@ public enum State {
     empty,
     water,
     border,
-    enWell;
+    enWell,
+    injured,
+    missed;
     private State() {
     }
 }
