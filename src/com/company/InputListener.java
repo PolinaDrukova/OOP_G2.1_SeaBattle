@@ -1,8 +1,11 @@
 package com.company;
 
+import com.company.enum_state.DeckCount;
 import com.company.enum_state.Orientation;
+import com.company.objects.Point;
 
 public  interface InputListener {
-    void makeShip(int x, int y, int palubs, Orientation o);
+    boolean addNewShip(DeckCount decks, Orientation orient, Point startCoord);
     void attack(int x, int y);
+    void quitGame();
 }

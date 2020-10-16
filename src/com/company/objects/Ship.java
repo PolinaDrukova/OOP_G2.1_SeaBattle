@@ -9,38 +9,64 @@ import java.util.Map;
 
 public class Ship {
 
-    private Cells[] cells;
     private Orientation orientation;
     private DeckCount deckCount;
     private Point[] coords;
-    private Map<String, Integer> points;
+    Cells[] decks;
+    private boolean isAlive;
+    private boolean isChecked;
 
     public Ship() {
-        this.cells = null;
         this.orientation = Orientation.None;
         this.deckCount = DeckCount.Invalid;
         this.coords = null;
     }
 
-    public Ship(BattleField map, Orientation orientation, DeckCount deckCount, Point[] coords) {
+    public Ship(int n) {
+        n = deckCount.getValue();
+    }
+
+    public Ship(Ship ship) {
+        this.isAlive = true;
+        this.decks = ship.decks;
+        this.isChecked = false;
+    }
+
+
+    public Ship(Field map, Orientation orientation, DeckCount deckCount, Point[] coords) {
         this.orientation = orientation;
         this.deckCount = deckCount;
         this.coords = coords;
-        cells = new Cells[deckCount.getValue()];
+        decks = new Cells[deckCount.getValue()];
 
-        for (int i = 0; i < cells.length; i++) {
+        for (int i = 0; i < decks.length; i++) {
             Cells deck = new Cells(coords[i], 'O', 'X');
-            cells[i] = deck;
+            decks[i] = deck;
             map.addObject(deck);
         }
     }
+
 
     public boolean isValid() {
         return coords != null && orientation != Orientation.None && deckCount != DeckCount.Invalid;
 
     }
 
-    public static Ship make(BattleField map, Orientation orientation, DeckCount deckCount, Point startCoord) {
+    public boolean isAlive() {
+        boolean result = false;
+        for (Cells deck : decks) {
+            if (deck.isAlive()) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    public DeckCount getDeckCount(){
+        return deckCount;
+    }
+
+    public static Point[] getCoordsForShip(Field map, Orientation orientation, DeckCount deckCount, Point startCoord) {
         Point step;
         if (orientation == Orientation.Horizontal) {
             step = new Point(1, 0);
@@ -53,7 +79,7 @@ public class Ship {
         Point[] coord = new Point[deckCount.getValue()];
         Point position = new Point(startCoord.x, startCoord.y);
         for (int i = 0; i < deckCount.getValue(); i++) {
-            isPosiblePlace = map.isValidCoord(position) && !map.isCollide(position);
+            isPosiblePlace = map.isValidCoord(position) && !map.isCollide(position) && !map.hasNeighbour(position);
             if (!isPosiblePlace) {
                 break;
             }
@@ -63,9 +89,10 @@ public class Ship {
 
         }
         if (isPosiblePlace) {
-            return new Ship(map, orientation, deckCount, coord);
+            return coord;
         }
 
         return null;
     }
+
 }

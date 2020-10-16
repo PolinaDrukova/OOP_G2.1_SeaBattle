@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.enum_state.DeckCount;
 import com.company.objects.Point;
 
 import java.util.HashMap;
@@ -12,28 +13,20 @@ public class BattleField {
 
     public final int width = 10;
     public final int height = 10;
-
     private char[] head;
     private char[][] cells;
     private IMapObject[][] objects;
-    Map<Character, Integer> points = new HashMap<>();
+    private DeckCount deckCount;
+    Point[] neighbours;
+
 
     public BattleField() {
         head = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
         cells = new char[width][height];
         objects = new IMapObject[width][height];
 
-        points.put('A', 0);
-        points.put('B', 1);
-        points.put('C', 2);
-        points.put('D', 3);
-        points.put('E', 4);
-        points.put('F', 5);
-        points.put('G', 6);
-        points.put('H', 7);
-        points.put('I', 8);
-        points.put('J', 9);
     }
+
 
     public void addObject(IMapObject object) {
         Point position = object.getPosition();
@@ -49,6 +42,18 @@ public class BattleField {
         return objects[position.x][position.y] != null;
     }
 
+    public boolean hasNeighbour(Point position) {
+        boolean result = false;
+        for (Point p : neighbours) {
+            Point neighbour = new Point(position.x + p.x, position.y + p.y);
+            if (isValidCoord(neighbour) && objects[neighbour.x][neighbour.y] != null) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
 
     public boolean isValidCoord(Point point) {
         return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
@@ -60,6 +65,15 @@ public class BattleField {
                 cells[x][y] = ' ';
             }
         }
+        neighbours = new Point[8];
+        neighbours[0] = new Point(-1, -1);
+        neighbours[1] = new Point(-1, 0);
+        neighbours[2] = new Point(-1, 1);
+        neighbours[3] = new Point(0, 1);
+        neighbours[4] = new Point(1, 1);
+        neighbours[5] = new Point(1, 0);
+        neighbours[6] = new Point(1, -1);
+        neighbours[7] = new Point(0, -1);
     }
 
     private void update() {
@@ -100,4 +114,5 @@ public class BattleField {
             System.out.println('|');
         }
     }
+
 }

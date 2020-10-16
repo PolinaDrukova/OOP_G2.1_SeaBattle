@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.InputListener;
+import com.company.enum_state.DeckCount;
 import com.company.enum_state.GameState;
 import com.company.enum_state.Orientation;
 import com.company.objects.Point;
@@ -9,8 +10,8 @@ import java.util.Scanner;
 
 public class Input implements InputListener {
     boolean done;
-    Scanner scanner;
-    InputListener listener;
+    private Scanner scanner;
+    private InputListener listener;
 
     public Input(InputListener listener) {
         this.done = false;
@@ -18,19 +19,19 @@ public class Input implements InputListener {
         this.listener = listener;
     }
 
-    public boolean isDone() {
-        return done;
-    }
-
     public void process(GameState state) {
         String in = scanner.nextLine();
         System.out.print("command: " + in);
-        done = "q".equals(in) || "quit".equals(in);
+        boolean quitGame = "q".equals(in) || "quit".equals(in);
 
-        if (!done && listener != null) {
+        if (listener != null) {
+            if (quitGame) {
+                listener.quitGame();
+                return;
+            }
             if (state == GameState.Fill) {
                 fillProcess(in);
-            } else if (state == GameState.Process) {
+            } else if (state == GameState.Battle) {
                 doProcess(in);
             }
         }
@@ -44,7 +45,7 @@ public class Input implements InputListener {
         if (coords.length >= 2) {
             char symbol = Character.toLowerCase(coords[0].charAt(0));
             x = symbol - 'a';
-            y = Integer.parseInt(coords[1]);
+            y = Integer.parseInt(coords[1]) ;
         }
         return new Point(x, y);
     }
@@ -54,7 +55,7 @@ public class Input implements InputListener {
 
         if (chunks.length >= 3) {
             Point c = parseCoords(chunks[0]);
-            int palubs = Integer.parseInt(chunks[2]);
+            int decks = Integer.parseInt(chunks[2]);
             Orientation orient = Orientation.None;
 
             if ("H".equals(chunks[1]) || "h".equals(chunks[1])) {
@@ -63,7 +64,7 @@ public class Input implements InputListener {
                 orient = Orientation.Vertical;
             }
             if (orient != Orientation.None && c.x >= 0 && c.y >= 0) {
-                listener.makeShip(c.x, c.y, palubs, orient);
+                listener.addNewShip(DeckCount.valueOf(decks), orient, new Point(c.x, c.y));
             }
         }
     }
@@ -76,13 +77,19 @@ public class Input implements InputListener {
         }
     }
 
-    @Override
-    public void makeShip(int x, int y, int palubs, Orientation o) {
 
+    @Override
+    public boolean addNewShip(DeckCount decks, Orientation orient, Point startCoord) {
+        return true;
     }
 
     @Override
     public void attack(int x, int y) {
+
+    }
+
+    @Override
+    public void quitGame() {
 
     }
 }
