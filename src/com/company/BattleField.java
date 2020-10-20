@@ -1,118 +1,77 @@
 package com.company;
 
-import com.company.enum_state.DeckCount;
+
+import com.company.enum_state.CellState;
+import com.company.objects.Cell;
 import com.company.objects.Point;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class BattleField {
-    public static final Logger log = Logger.getLogger(BattleField.class.getName());
 
     public final int width = 10;
     public final int height = 10;
-    private char[] head;
-    private char[][] cells;
-    private IMapObject[][] objects;
-    private DeckCount deckCount;
-    Point[] neighbours;
 
+    //список кораблей игрока
+    protected List<Cell> shotPoints = new ArrayList<>();//список  клеток дступных для обстрела
+
+    private Cell[][] cells = new Cell[height][width];
 
     public BattleField() {
-        head = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-        cells = new char[width][height];
-        objects = new IMapObject[width][height];
 
-    }
-
-
-    public void addObject(IMapObject object) {
-        Point position = object.getPosition();
-        if (isValidCoord(position)) {
-            objects[position.x][position.y] = object;
-        } else {
-            log.warning("can't  add map object");
-        }
-    }
-
-
-    public boolean isCollide(Point position) { // дописать границы
-        return objects[position.x][position.y] != null;
-    }
-
-    public boolean hasNeighbour(Point position) {
-        boolean result = false;
-        for (Point p : neighbours) {
-            Point neighbour = new Point(position.x + p.x, position.y + p.y);
-            if (isValidCoord(neighbour) && objects[neighbour.x][neighbour.y] != null) {
-                result = true;
-                break;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Point point = new Point(x, y);
+                if (isValidCoord(point)) {
+                    this.cells[y][x] = new Cell(point);
+                    shotPoints.add(this.cells[y][x]);
+                }
             }
         }
-        return result;
+    }
+
+
+    public boolean noNeighbours(Point position, Point lastPosition) { //границы вокруг корабля, на которые нельзя ставить другой корабль
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (!(i == 0 && j == 0)) {
+                    Point point = new Point(position.getX() + i, position.getY()+ j);
+                    if (isValidCoord(point) && getCell(point).getState() == CellState.alive) {
+                        if (!(point.getX() == lastPosition.getX() && point.getY() == lastPosition.getY())) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 
     public boolean isValidCoord(Point point) {
-        return point.x >= 0 && point.x < width && point.y >= 0 && point.y < height;
+        return point.getX() >= 0 && point.getX() < width && point.getY() >= 0 && point.getY() < height;
     }
 
-    public void clean() {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                cells[x][y] = ' ';
-            }
-        }
-        neighbours = new Point[8];
-        neighbours[0] = new Point(-1, -1);
-        neighbours[1] = new Point(-1, 0);
-        neighbours[2] = new Point(-1, 1);
-        neighbours[3] = new Point(0, 1);
-        neighbours[4] = new Point(1, 1);
-        neighbours[5] = new Point(1, 0);
-        neighbours[6] = new Point(1, -1);
-        neighbours[7] = new Point(0, -1);
+    public Cell getCell(Point point) {
+        return cells[point.getX()][point.getY()];
     }
 
-    private void update() {
-        clean();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-
-                IMapObject object = objects[x][y];
-                if (object != null) {
-                    Point position = object.getPosition();
-
-                    cells[position.x][position.y] = object.getView();
-                }
-            }
-        }
+    public List<Cell> getShotPoints() {
+        return shotPoints;
     }
 
-    public void draw() {
-        update();
-        int coordX = 0;
-        int coordY = 0;
-        System.out.print(' ');
-        for (int x = 0; x < width; x++) {
-            System.out.print(' ');
-            System.out.print(head[coordX]);
-            coordX += 1;
-        }
-        System.out.println();
-        for (int y = 0; y < height; y++) {
-            System.out.print(coordY++);
-            for (int x = 0; x < width; x++) {
-                if (!(x == 0 && coordY == height + 1)) {
-                    System.out.print(' ');
-                }
-                System.out.print(cells[x][y]);
-
-            }
-            System.out.println('|');
-        }
+    public int getWidth() {
+        return width;
     }
 
+    public int getHeight() {
+        return height;
+    }
 }
+
+
+
+

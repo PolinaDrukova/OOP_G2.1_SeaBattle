@@ -1,62 +1,69 @@
 package com.company;
 
+import com.company.BusinessLogic;
 import com.company.Player.BasePlayer;
-import com.company.Player.Player;
-import com.company.enum_state.GameState;
+
+
 
 public class Game {
-    private GameState state;
-    private BasePlayer[] players;
-    private int currentIndex;
-    private boolean isGameOver;
 
-    private void next_step() {
+    private int n = 2;
+    private BasePlayer[] players = new BasePlayer[n];
+    private int currentIndex = 0;//индекс игрока который ходит
+    private boolean step;
 
-        ++currentIndex;
-
-        if( currentIndex >= players.length ) {
-            currentIndex = 0;
-        }
-    }
 
     public Game() {
-
-        state = GameState.Fill;
-
-        players = new BasePlayer[2];
-        players[0] = new Player( this );
-        players[1] = new BasePlayer( this ); // BotPlayer
-
-        currentIndex = 0;
-        isGameOver = false;
-    }
-
-    public GameState getState() {
-
-        return state;
-    }
-
-    public void process() {
-
-        if( state != GameState.Battle &&
-                players[0].is_map_filled() &&
-                players[1].is_map_filled() )
-        {
-            state = GameState.Battle;
+        for (int i = 0; i < n; i++) {
+            players[i] = new BasePlayer();
+            BusinessLogic.fill(players[i].field, players[i].ships);
         }
 
-        players[currentIndex].process();
 
-        next_step();
     }
 
-    public void setGameOver() {
 
-        isGameOver = true;
+    public void process() {
+        while (players[0].isAlive() && players[1].isAlive()) {
+            if (step) {
+                if (!BusinessLogic.shot(players[1])) {
+                    step = false;
+                }
+            } else {
+                if (BusinessLogic.shot(players[0])) {
+                    step = true;
+                }
+            }
+
+        }
     }
 
-    public boolean isGameOver() {
 
-        return isGameOver;
+    public Integer whoWin() {
+        int flag = -1;
+        for (int i = 0; i < n; i++) {
+            if (players[i].isAlive()) {
+                if (flag != -1) {
+                    return null;
+                }
+                flag = i;
+            }
+        }
+        return flag;
+    }
+
+    public BasePlayer getPlayers(int i) {
+        return players[i];
+    }
+    public BasePlayer[] getPlayers() {
+        return players;
+    }
+
+    public boolean isStep() {
+        return step;
+    }
+
+    public void setStep(boolean step) {
+        this.step = step;
     }
 }
