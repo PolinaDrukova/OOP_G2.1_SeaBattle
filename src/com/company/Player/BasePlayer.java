@@ -14,20 +14,16 @@ public class BasePlayer {
     public List<Ship> ships = new ArrayList<>();
 
 
-    public void newGame() {
-        this.field = new BattleField();
-    }
-
     public boolean isAlive() {
         for (Ship ship : ships) {
-            if (ship.isAlive()) {
+            if (ship.isAliveShip()) {
                 return true;
             }
         }
         return false;
     }
 
-    public BattleField getField() {
+    public BattleField getBattleField() {
         return field;
     }
 

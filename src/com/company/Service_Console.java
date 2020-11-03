@@ -5,10 +5,10 @@ import com.company.Game;
 import com.company.Player.BasePlayer;
 import com.company.objects.Point;
 
-public class Console {
+public class Service_Console {
     public static void draw(Game game) {
         for (BasePlayer player : game.getPlayers()) {
-            draw(player.getField());
+            draw(player.getBattleField());
         }
     }
 

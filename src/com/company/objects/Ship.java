@@ -22,7 +22,7 @@ public class Ship {
     }
 
 
-    public boolean isAlive() {
+    public boolean isAliveShip() {
         for (Cell deck : decks) {
             if (deck.getState() == CellState.alive) {
                 return true;
