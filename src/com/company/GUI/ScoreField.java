@@ -10,7 +10,6 @@ import java.util.Iterator;
 public  class ScoreField extends JPanel {
     private static final long serialVersionUID = 1L;
     private Game game;
-    private int ships;
     private int player;
 
     public ScoreField(Game model, int player) {
@@ -23,18 +22,18 @@ public  class ScoreField extends JPanel {
         int[] m = new int[4];
 
         int i;
-        for (i = 0; i < 0; ++i) {
+        for (i = 0; i < m.length; ++i) {
             m[i] = 0;
         }
 
-        this.ships = 0;
+        int ships = 0;
         Iterator<Ship> var4 = game.getPlayers(player).getShips().iterator();
 
         while (var4.hasNext()) {
             Ship ship = var4.next();
             if (ship.isAliveShip()) {
                 ++m[ship.getDecks().size() - 1];
-                ++this.ships;
+                ++ships;
             }
         }
         for (i = 0; i < 4; ++i) {
@@ -48,7 +47,7 @@ public  class ScoreField extends JPanel {
         }
 
 
-        String st = "Alive: ".concat(String.valueOf(this.ships));
+        String st = "Alive: ".concat(String.valueOf(ships));
         g.drawString(st, 25, 100);
 
     }
