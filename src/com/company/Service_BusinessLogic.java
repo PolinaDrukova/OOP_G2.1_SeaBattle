@@ -161,7 +161,7 @@ public class Service_BusinessLogic {
                 flag = i;
             }
         }
-        return flag;
+        return flag + 1;
     }
 
     private boolean isAlivePlayer(Game game, int i) {

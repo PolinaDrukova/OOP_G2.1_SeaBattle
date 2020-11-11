@@ -47,7 +47,7 @@ public  class ScoreField extends JPanel {
         }
 
 
-        String st = "Alive: ".concat(String.valueOf(ships));
+        String st = "Выжило : ".concat(String.valueOf(ships));
         g.drawString(st, 25, 100);
 
     }
